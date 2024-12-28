@@ -17,4 +17,14 @@ const blogSchema = new Schema<TBlog>(
   },
 );
 
+// pre middleware for isPublished false
+blogSchema.pre("find", function (next) {
+  this.find({ isPublished: { $ne: false } });
+  next();
+});
+blogSchema.pre("findOne", function (next) {
+  this.findOne({ isPublished: { $ne: false } });
+  next();
+});
+
 export const Blog = model<TBlog>("Blog", blogSchema);
