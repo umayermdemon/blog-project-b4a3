@@ -12,8 +12,8 @@ router.post(
   validateRequest(blogValidations.createBlogValidations),
   blogControllers.createBlog,
 );
-router.get("/", auth("user", "admin"), blogControllers.getAllBlog);
-router.get("/:id", auth("user", "admin"), blogControllers.getSingleBlog);
+router.get("/", blogControllers.getAllBlog);
+router.get("/:id", blogControllers.getSingleBlog);
 router.patch(
   "/:id",
   auth("user", "admin"),

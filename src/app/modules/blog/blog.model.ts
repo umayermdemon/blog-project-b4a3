@@ -26,5 +26,9 @@ blogSchema.pre("findOne", function (next) {
   this.findOne({ isPublished: { $ne: false } });
   next();
 });
+blogSchema.pre("aggregate", function (next) {
+  this.pipeline().unshift({ $match: { isPublished: { $ne: false } } });
+  next();
+});
 
 export const Blog = model<TBlog>("Blog", blogSchema);
