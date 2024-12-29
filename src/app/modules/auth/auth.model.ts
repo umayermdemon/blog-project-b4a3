@@ -7,7 +7,8 @@ const userRegistrationSchema = new Schema<TRegisterUser, UserModel>(
     name: { type: String, required: true },
     email: { type: String, required: true, unique: true },
     password: { type: String, required: true },
-    role: { type: String, enum: ["admin", "user"], default: "user" },
+    role: { type: String, enum: ["user"], default: "user" },
+    // role: { type: String, default: "user" },
     isBlocked: { type: Boolean, default: false },
   },
   {

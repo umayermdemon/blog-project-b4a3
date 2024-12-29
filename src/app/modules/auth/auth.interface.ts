@@ -6,7 +6,8 @@ export interface TRegisterUser {
   name: string;
   email: string;
   password: string;
-  role: "admin" | "user";
+  // role: "admin" | "user";
+  role: "user";
   isBlocked: boolean;
 }
 

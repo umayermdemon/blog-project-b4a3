@@ -16,10 +16,10 @@ router.get("/", blogControllers.getAllBlog);
 router.get("/:id", blogControllers.getSingleBlog);
 router.patch(
   "/:id",
-  auth("user", "admin"),
+  auth("user"),
   validateRequest(blogValidations.updateBlogValidations),
   blogControllers.updateBlog,
 );
-router.delete("/:id", auth("admin"), blogControllers.deleteBlog);
+router.delete("/:id", auth("user"), blogControllers.deleteBlog);
 
 export const BlogRouter = router;

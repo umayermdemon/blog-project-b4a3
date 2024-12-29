@@ -59,6 +59,14 @@ const deleteBlog = catchAsync(async (req, res) => {
   if (!blog) {
     throw new AppError(httpStatus.NOT_FOUND, "Blog not found");
   }
+  const userBlogEmail = req.user.email;
+  const registeredUserEmail = await RegisteredUser.findById(blog?.author);
+  if (userBlogEmail !== registeredUserEmail?.email) {
+    throw new AppError(
+      httpStatus.UNAUTHORIZED,
+      "You are not authorized to delete this blog",
+    );
+  }
   const result = await blogServices.deleteBlogFromDb(id);
   sendResponse(res, {
     success: true,
