@@ -7,16 +7,16 @@ const registerUser = catchAsync(async (req, res) => {
   const result = await authServices.registerUserIntoDb(req.body);
   sendResponse(res, {
     success: true,
-    message: `${result?.role} registered successfully`,
+    message: "User registered successfully",
     statusCode: httpStatus.CREATED,
-    data: result,
+    data: { _id: result._id, name: result.name, email: result.email },
   });
 });
 const loginUser = catchAsync(async (req, res) => {
   const result = await authServices.loginUser(req.body);
   sendResponse(res, {
     success: true,
-    message: "Logged in successfully",
+    message: "Login successful",
     statusCode: 200,
     data: result,
   });

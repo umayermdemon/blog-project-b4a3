@@ -12,17 +12,16 @@ const blockUser = catchAsync(async (req, res) => {
   const user = await RegisteredUser.findById(userId);
 
   if (!user) {
-    throw new AppError(httpStatus.NOT_FOUND, "User");
+    throw new AppError(httpStatus.NOT_FOUND, "User not found");
   }
   if (user?.role !== "user") {
     throw new AppError(httpStatus.FORBIDDEN, "Can not block an admin");
   }
-  const result = await adminServices.blockUserIntoDb(userId);
+  await adminServices.blockUserIntoDb(userId);
   sendResponse(res, {
     success: true,
     message: "User blocked successfully",
     statusCode: 200,
-    data: result,
   });
 });
 const deleteBlog = catchAsync(async (req, res) => {
@@ -32,12 +31,11 @@ const deleteBlog = catchAsync(async (req, res) => {
     throw new AppError(httpStatus.NOT_FOUND, "Blog not found");
   }
 
-  const result = await adminServices.deleteBlogFromDb(id);
+  await adminServices.deleteBlogFromDb(id);
   sendResponse(res, {
     success: true,
     message: "Blog deleted successfully",
     statusCode: 200,
-    data: result,
   });
 });
 

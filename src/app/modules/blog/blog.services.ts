@@ -1,8 +1,11 @@
+import AppError from "../../errors/AppError";
+import { RegisteredUser } from "../auth/auth.model";
 import { TBlog } from "./blog.interface";
 import { Blog } from "./blog.model";
+import httpStatus from "http-status";
 
 const createBlogIntoDb = async (payload: TBlog) => {
-  const result = await Blog.create(payload);
+  const result = (await Blog.create(payload)).populate("author");
   return result;
 };
 const getAllBlogFromDb = async (query: Record<string, unknown>) => {
@@ -31,19 +34,46 @@ const getAllBlogFromDb = async (query: Record<string, unknown>) => {
   // sort order
   const order = query?.sortOrder === "desc" ? -1 : 1;
   const sortOrderQuery = await sortByQuery.sort({ createdAt: order });
+  console.log({ sortOrderQuery });
   return sortOrderQuery;
 };
 const getSingleBlogFromDb = async (id: string) => {
   const result = await Blog.findById(id).populate("author");
   return result;
 };
-const updateBlogIntoDb = async (id: string, payload: Partial<TBlog>) => {
+const updateBlogIntoDb = async (
+  id: string,
+  payload: Partial<TBlog>,
+  userBlogEmail: string,
+) => {
+  const blog = await Blog.findById(id);
+  if (!blog) {
+    throw new AppError(httpStatus.NOT_FOUND, "Blog not found");
+  }
+  const registeredUserEmail = await RegisteredUser.findById(blog?.author);
+  if (userBlogEmail !== registeredUserEmail?.email) {
+    throw new AppError(
+      httpStatus.UNAUTHORIZED,
+      "You are not authorized to update this blog",
+    );
+  }
   const result = await Blog.findByIdAndUpdate(id, payload, {
     new: true,
   }).populate("author");
   return result;
 };
-const deleteBlogFromDb = async (id: string) => {
+const deleteBlogFromDb = async (id: string, userBlogEmail: string) => {
+  const blog = await Blog.findById(id);
+  if (!blog) {
+    throw new AppError(httpStatus.NOT_FOUND, "Blog not found");
+  }
+  const registeredUserEmail = await RegisteredUser.findById(blog?.author);
+  if (userBlogEmail !== registeredUserEmail?.email) {
+    throw new AppError(
+      httpStatus.UNAUTHORIZED,
+      "You are not authorized to delete this blog",
+    );
+  }
   const result = await Blog.findByIdAndDelete(id);
   return result;
 };
