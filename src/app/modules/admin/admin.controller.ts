@@ -17,6 +17,9 @@ const blockUser = catchAsync(async (req, res) => {
   if (user?.role !== "user") {
     throw new AppError(httpStatus.FORBIDDEN, "Can not block an admin");
   }
+  if (user?.isBlocked === true) {
+    throw new AppError(httpStatus.BAD_REQUEST, "This user is already blocked");
+  }
   await adminServices.blockUserIntoDb(userId);
   sendResponse(res, {
     success: true,

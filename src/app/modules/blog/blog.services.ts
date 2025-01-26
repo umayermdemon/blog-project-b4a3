@@ -4,8 +4,11 @@ import { TBlog } from "./blog.interface";
 import { Blog } from "./blog.model";
 import httpStatus from "http-status";
 
-const createBlogIntoDb = async (payload: TBlog) => {
-  const result = (await Blog.create(payload)).populate("author");
+const createBlogIntoDb = async (payload: TBlog, email: string) => {
+  const author = await RegisteredUser.findOne({ email: email });
+  const result = (
+    await Blog.create({ ...payload, author: author?._id })
+  ).populate("author");
   return result;
 };
 const getAllBlogFromDb = async (query: Record<string, unknown>) => {
@@ -34,7 +37,6 @@ const getAllBlogFromDb = async (query: Record<string, unknown>) => {
   // sort order
   const order = query?.sortOrder === "desc" ? -1 : 1;
   const sortOrderQuery = await sortByQuery.sort({ createdAt: order });
-  console.log({ sortOrderQuery });
   return sortOrderQuery;
 };
 const getSingleBlogFromDb = async (id: string) => {
